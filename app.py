@@ -25,6 +25,10 @@ def predict():
         # Get input values from form
         features = [float(x) for x in request.form.values()]
         
+        # Convert user-friendly Years to Days as expected by the model
+        features[9] = features[9] * 365   # DAYS_BIRTH
+        features[10] = features[10] * 365 # DAYS_EMPLOYED
+        
         # Convert input into array
         final_input = [np.array(features)]
         

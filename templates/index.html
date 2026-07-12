@@ -179,6 +179,13 @@
         <div class="hero">
             <h2>Applicant Evaluation</h2>
             <p>Enter the applicant's demographic and financial details below to run our automated credit risk assessment.</p>
+            <div class="criteria-box" style="margin-top: 1.5rem; background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 8px; border: 1px solid var(--border); text-align: left; max-width: 600px; margin-left: auto; margin-right: auto; font-size: 0.9rem;">
+                <strong>Approval Criteria (ML Model Expectations):</strong>
+                <ul style="margin-top: 0.5rem; margin-left: 1.5rem; color: var(--text-muted);">
+                    <li><strong>Low Risk (Approved):</strong> Higher income, longer employment duration, older applicants, stable housing (House/apartment), no past defaults in history window.</li>
+                    <li><strong>High Risk (Rejected):</strong> Low income, very short employment duration, high number of dependents relative to income, past payment defaults.</li>
+                </ul>
+            </div>
         </div>
 
         <div class="form-card">
@@ -264,13 +271,13 @@
                 </div>
 
                 <div class="input-box">
-                    <label>Age (in Days)</label>
-                    <input type="number" name="DAYS_BIRTH" placeholder="e.g. 12500" required min="0">
+                    <label>Age (in Years)</label>
+                    <input type="number" name="DAYS_BIRTH" placeholder="e.g. 35" required min="18" max="100">
                 </div>
 
                 <div class="input-box">
-                    <label>Employed Duration (in Days)</label>
-                    <input type="number" name="DAYS_EMPLOYED" placeholder="e.g. 1500" required min="0">
+                    <label>Employed Duration (in Years)</label>
+                    <input type="number" name="DAYS_EMPLOYED" placeholder="e.g. 5" required min="0" max="60">
                 </div>
 
                 <div class="input-box">
