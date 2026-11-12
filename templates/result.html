@@ -3,192 +3,602 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkillWallet Internship | Decision Result</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>SkillWallet | Decision Assessment Result</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #0f172a;       /* Deep Navy */
-            --primary-hover: #1e293b; /* Lighter Navy */
-            --accent: #2563eb;        /* Bright Blue */
-            --success: #10b981;       /* Emerald */
-            --danger: #ef4444;        /* Red */
-            --background: #f8fafc;    /* Off-white */
-            --card-bg: #ffffff;
-            --border: #e2e8f0;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
+            --bg-dark: #090d16;
+            --bg-card: rgba(18, 24, 38, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.35);
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-rose: #f43f5e;
+            --accent-amber: #f59e0b;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 8px;
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-            background-attachment: fixed;
+            background-color: var(--bg-dark);
             color: var(--text-main);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(79, 70, 229, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 25%, rgba(6, 182, 212, 0.1) 0%, transparent 45%);
+            background-attachment: fixed;
+            line-height: 1.6;
         }
 
-        header {
-            width: 100%;
-            padding: 1.25rem 3rem;
-            background: var(--card-bg);
-            border-bottom: 1px solid var(--border);
+        /* Nav */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(16px);
+            background: rgba(9, 13, 22, 0.85);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
             display: flex;
             align-items: center;
+            justify-content: space-between;
         }
 
-        .logo {
+        .nav-logo {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-main);
             font-size: 1.25rem;
             font-weight: 700;
-            color: var(--primary);
-            letter-spacing: -0.5px;
         }
 
-        .logo-mark {
-            width: 24px;
-            height: 24px;
-            background: var(--accent);
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        .container {
-            max-width: 700px;
-            width: 100%;
-            padding: 4rem 1.5rem;
-            flex-grow: 1;
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
         }
 
-        .result-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 4rem 3rem;
-            text-align: center;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            animation: fadeIn 0.4s ease-out;
-            width: 100%;
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 5rem;
+        }
+
+        /* Result Main Card */
+        .result-main-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 3rem 2.5rem;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
+            margin-bottom: 2.5rem;
         }
 
-        .result-card::before {
+        .result-main-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 4px;
-        }
-        
-        .result-card.approved::before { background: var(--success); }
-        .result-card.rejected::before { background: var(--danger); }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            right: 0;
+            height: 5px;
         }
 
-        .status-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+        .card-approved::before { background: var(--accent-emerald); }
+        .card-rejected::before { background: var(--accent-rose); }
+
+        /* Status Header */
+        .status-hero {
             display: flex;
             align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem auto;
+            justify-content: space-between;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            padding-bottom: 2.5rem;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .status-badge-tier {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        .tier-prime {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #34d399;
+        }
+
+        .tier-risk {
+            background: rgba(244, 63, 94, 0.15);
+            border: 1px solid rgba(244, 63, 94, 0.4);
+            color: #fb7185;
+        }
+
+        .tier-moderate {
+            background: rgba(6, 182, 212, 0.15);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            color: #38bdf8;
+        }
+
+        .decision-title {
             font-size: 2.5rem;
-            color: white;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
         }
 
-        .approved .status-icon {
-            background: var(--success);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        .text-approved { color: #34d399; }
+        .text-rejected { color: #fb7185; }
+
+        .decision-narrative {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            max-width: 500px;
         }
 
-        .rejected .status-icon {
-            background: var(--danger);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        /* Circular Probability Gauge */
+        .gauge-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
         }
 
-        h2 {
-            font-size: 2.25rem;
+        .gauge-svg {
+            width: 140px;
+            height: 140px;
+            transform: rotate(-90deg);
+        }
+
+        .gauge-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.08);
+            stroke-width: 10;
+        }
+
+        .gauge-fill {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+
+        .gauge-fill-approved { stroke: var(--accent-emerald); }
+        .gauge-fill-rejected { stroke: var(--accent-rose); }
+
+        .gauge-center-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .gauge-percent {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1;
+        }
+
+        .gauge-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.2rem;
+        }
+
+        /* Explainability Factors */
+        .xai-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .xai-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+        }
+
+        .xai-title {
+            font-size: 1rem;
             font-weight: 700;
             margin-bottom: 1rem;
-            letter-spacing: -0.025em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        p {
+        .xai-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .xai-list li {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            color: #cbd5e1;
+        }
+
+        .xai-list li i {
+            margin-top: 3px;
+        }
+
+        /* Applicant Parameters Table */
+        .summary-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .summary-header {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .summary-label {
+            font-size: 0.75rem;
             color: var(--text-muted);
-            font-size: 1.125rem;
-            margin-bottom: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-val {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        /* Recommendation Box */
+        .recom-box {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .recom-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #a5b4fc;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .recom-text {
+            color: #cbd5e1;
+            font-size: 0.92rem;
             line-height: 1.6;
         }
 
-        a.button {
-            display: inline-block;
-            background: var(--background);
-            color: var(--text-main);
+        /* Actions */
+        .actions-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-action-primary {
+            padding: 0.85rem 1.8rem;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            color: white;
             text-decoration: none;
-            padding: 0.875rem 2.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            border: 1px solid var(--border);
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px var(--primary-glow);
             transition: all 0.2s ease;
         }
 
-        a.button:hover {
-            background: var(--border);
-            border-color: #cbd5e1;
+        .btn-action-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.5);
+        }
+
+        .btn-action-secondary {
+            padding: 0.85rem 1.5rem;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .status-hero {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .gauge-wrapper {
+                align-self: center;
+            }
+            .xai-grid {
+                grid-template-columns: 1fr;
+            }
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .actions-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn-action-primary, .btn-action-secondary {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <span class="logo-mark"></span>
-            SkillWallet Internship
+
+    <!-- Nav -->
+    <nav>
+        <a href="/" class="nav-logo">
+            <div class="nav-logo-icon">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+            <span>SkillWallet <small style="font-weight: 400; opacity: 0.7; font-size: 0.85rem;">Decision Engine</small></span>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="/">Overview</a></li>
+            <li><a href="/evaluate">Live Evaluator</a></li>
+            <li><a href="/analytics"><i class="fa-solid fa-chart-line" style="margin-right: 4px; color: var(--accent-cyan);"></i> Analytics Dashboard</a></li>
+            <li><a href="https://github.com/Bhuwinrag/Credit-Card-Skillwallet-Internship" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a></li>
+        </ul>
+
+        <div>
+            <a href="/evaluate" class="btn-action-primary" style="padding: 0.55rem 1.25rem; font-size: 0.88rem;">
+                <i class="fa-solid fa-arrow-rotate-left"></i> New Evaluation
+            </a>
         </div>
-    </header>
+    </nav>
 
     <div class="container">
-        <!-- Jinja dynamic class setting based on result -->
-        <div class="result-card {% if 'Approved' in prediction_text %}approved{% else %}rejected{% endif %}">
+        <!-- Main Assessment Card -->
+        <div class="result-main-card {% if is_approved %}card-approved{% else %}card-rejected{% endif %}">
             
-            <div class="status-icon">
-                {% if 'Approved' in prediction_text %}
-                    ✓
-                {% else %}
-                    ✕
-                {% endif %}
+            <!-- Hero Status Block -->
+            <div class="status-hero">
+                <div>
+                    <div class="status-badge-tier {% if is_approved %}tier-prime{% else %}tier-risk{% endif %}">
+                        <i class="fa-solid {% if is_approved %}fa-shield-check{% else %}fa-triangle-exclamation{% endif %}"></i>
+                        <span>{{ risk_tier }}</span>
+                    </div>
+
+                    <h1 class="decision-title {% if is_approved %}text-approved{% else %}text-rejected{% endif %}">
+                        {{ prediction_text }}
+                    </h1>
+
+                    <p class="decision-narrative">
+                        {% if is_approved %}
+                            The demographic, financial capacity, and credit bureau indicators satisfy underwriting thresholds.
+                            Application is categorized as <strong>Low Risk</strong> for revolving credit issuance.
+                        {% else %}
+                            The submitted profile indicates elevated default exposure under the balanced classification model.
+                            Application is categorized as <strong>High Risk / Declined</strong>.
+                        {% endif %}
+                    </p>
+                </div>
+
+                <!-- Probability Radial Gauge -->
+                <div class="gauge-wrapper">
+                    <svg class="gauge-svg" viewBox="0 0 100 100">
+                        <circle class="gauge-bg" cx="50" cy="50" r="42" />
+                        <circle class="gauge-fill {% if is_approved %}gauge-fill-approved{% else %}gauge-fill-rejected{% endif %}" 
+                                cx="50" cy="50" r="42" 
+                                stroke-dasharray="264" 
+                                stroke-dashoffset="{{ gauge_offset }}" />
+                    </svg>
+                    <div class="gauge-center-text">
+                        <div class="gauge-percent">{{ confidence_score }}%</div>
+                        <div class="gauge-label">{% if is_approved %}Approval{% else %}Risk{% endif %} Score</div>
+                    </div>
+                </div>
             </div>
 
-            <h2>{{ prediction_text }}</h2>
-            
-            <p>
-                {% if 'Approved' in prediction_text %}
-                    Based on the provided demographic and financial profile, this application meets the criteria and is automatically <strong>approved</strong> for credit.
-                {% else %}
-                    Based on the provided demographic and financial profile, this application carries too much risk and is <strong>rejected</strong>.
-                {% endif %}
-            </p>
+            <!-- Explainability (XAI) Factors -->
+            <div class="xai-grid">
+                <!-- Positive Drivers -->
+                <div class="xai-card">
+                    <div class="xai-title" style="color: var(--accent-emerald);">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Positive Credit Factors</span>
+                    </div>
+                    <ul class="xai-list">
+                        {% for factor in positive_factors %}
+                            <li><i class="fa-solid fa-check" style="color: var(--accent-emerald);"></i> {{ factor }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
 
-            <a href="/" class="button">Evaluate Another Applicant</a>
+                <!-- Risk Considerations -->
+                <div class="xai-card">
+                    <div class="xai-title" style="color: {% if is_approved %}var(--accent-amber){% else %}var(--accent-rose){% endif %};">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>Risk Considerations</span>
+                    </div>
+                    <ul class="xai-list">
+                        {% for factor in risk_factors %}
+                            <li><i class="fa-solid fa-circle-exclamation" style="color: {% if is_approved %}var(--accent-amber){% else %}var(--accent-rose){% endif %};"></i> {{ factor }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Profile Summary Table -->
+            <div class="summary-section">
+                <h3 class="summary-header">
+                    <i class="fa-solid fa-id-card-clip" style="color: var(--accent-cyan);"></i>
+                    <span>Submitted Applicant Summary</span>
+                </h3>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <span class="summary-label">Annual Income</span>
+                        <span class="summary-val">${{ "{:,.2f}".format(applicant_summary.income) }}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Employment Tenure</span>
+                        <span class="summary-val">{{ applicant_summary.employed_years }} Years</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Age</span>
+                        <span class="summary-val">{{ applicant_summary.age_years }} Years</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Housing Type</span>
+                        <span class="summary-val">{{ applicant_summary.housing_type }}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Family Members</span>
+                        <span class="summary-val">{{ applicant_summary.fam_members }} ({{ applicant_summary.dependency }} Dep)</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Vehicle / Property</span>
+                        <span class="summary-val">Car: {{ applicant_summary.car }} | Realty: {{ applicant_summary.realty }}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Bureau Window</span>
+                        <span class="summary-val">{{ applicant_summary.window }} Months</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Oldest Record</span>
+                        <span class="summary-val">{{ applicant_summary.open_month }} Months Ago</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendation Box -->
+            <div class="recom-box">
+                <div class="recom-title">
+                    <i class="fa-solid fa-file-signature"></i>
+                    <span>Automated Underwriting Recommendation</span>
+                </div>
+                <p class="recom-text">
+                    {{ recommendation_text }}
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="actions-row">
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <a href="/evaluate" class="btn-action-primary">
+                        <i class="fa-solid fa-user-plus"></i> Evaluate Another Applicant
+                    </a>
+                    <a href="/analytics" class="btn-action-secondary">
+                        <i class="fa-solid fa-chart-line"></i> View Model Analytics
+                    </a>
+                </div>
+                <div>
+                    <button type="button" class="btn-action-secondary" onclick="window.print()">
+                        <i class="fa-solid fa-print"></i> Print Assessment Report
+                    </button>
+                </div>
+            </div>
+
         </div>
     </div>
+
 </body>
 </html>

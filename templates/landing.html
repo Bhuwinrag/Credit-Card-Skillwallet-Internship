@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillWallet | Credit Card Approval Prediction Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --bg-card: rgba(18, 24, 38, 0.7);
+            --bg-card-hover: rgba(28, 36, 56, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-focus: rgba(99, 102, 241, 0.5);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.35);
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-rose: #f43f5e;
+            --accent-amber: #f59e0b;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(79, 70, 229, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 25%, rgba(6, 182, 212, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+            background-attachment: fixed;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(9, 13, 22, 0.8);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-secondary-nav {
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary-nav:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary-nav {
+            padding: 0.6rem 1.4rem;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 4px 14px var(--primary-glow);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary-nav:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 1.5rem 4rem;
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 3.5rem;
+            align-items: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 9999px;
+            background: rgba(79, 70, 229, 0.12);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+            color: #a5b4fc;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-badge-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-emerald);
+            box-shadow: 0 0 10px var(--accent-emerald);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .hero h1 {
+            font-size: 3.25rem;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.25rem;
+        }
+
+        .hero h1 span.gradient-text {
+            background: linear-gradient(135deg, #a5b4fc 0%, #38bdf8 50%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            margin-bottom: 2.25rem;
+            line-height: 1.7;
+            max-width: 580px;
+        }
+
+        .hero-ctas {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero-primary {
+            padding: 0.9rem 2rem;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            color: white;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 1.05rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 10px 25px -5px var(--primary-glow);
+            transition: all 0.25s ease;
+        }
+
+        .btn-hero-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(79, 70, 229, 0.6);
+        }
+
+        .btn-hero-secondary {
+            padding: 0.9rem 1.8rem;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 1.05rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: all 0.25s ease;
+        }
+
+        .btn-hero-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Card Mockup */
+        .hero-card-container {
+            perspective: 1000px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .glass-credit-card {
+            width: 100%;
+            max-width: 420px;
+            background: linear-gradient(135deg, rgba(30, 41, 69, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 22px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 35px rgba(79, 70, 229, 0.2);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .glass-credit-card:hover {
+            transform: translateY(-4px) rotateX(2deg) rotateY(-2deg);
+        }
+
+        .card-chip-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .card-chip {
+            width: 48px;
+            height: 36px;
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            border-radius: 6px;
+            position: relative;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        }
+
+        .card-chip::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(0,0,0,0.15);
+        }
+
+        .card-network {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .card-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #34d399;
+        }
+
+        .card-number {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 1.4rem;
+            letter-spacing: 3px;
+            margin-bottom: 1.75rem;
+            color: #e2e8f0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .card-holder-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-holder-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #ffffff;
+        }
+
+        .card-metric-badge {
+            text-align: right;
+        }
+
+        .card-metric-val {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #38bdf8;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Stats Ribbon */
+        .stats-ribbon {
+            max-width: 1200px;
+            margin: 0 auto 5rem;
+            padding: 0 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            backdrop-filter: blur(12px);
+        }
+
+        .stat-item {
+            text-align: center;
+            border-right: 1px solid var(--border-color);
+            padding: 0 1rem;
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+        .stat-num {
+            font-size: 2.25rem;
+            font-weight: 800;
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, #ffffff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-num span.highlight {
+            color: #38bdf8;
+            -webkit-text-fill-color: #38bdf8;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            font-weight: 500;
+        }
+
+        /* Section Layout */
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto 6rem;
+            padding: 0 1.5rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .section-tag {
+            color: var(--accent-cyan);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .section-title {
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        /* Architecture Pipeline */
+        .pipeline-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.25rem;
+            position: relative;
+        }
+
+        .pipeline-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.75rem 1.25rem;
+            position: relative;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pipeline-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(99, 102, 241, 0.4);
+            background: var(--bg-card-hover);
+        }
+
+        .pipeline-step-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(79, 70, 229, 0.2);
+            color: #a5b4fc;
+            border: 1px solid rgba(79, 70, 229, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .pipeline-icon {
+            font-size: 1.5rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.75rem;
+        }
+
+        .pipeline-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .pipeline-desc {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        /* Model Comparison Table */
+        .benchmark-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+        }
+
+        .benchmark-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .benchmark-table th {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.25rem 1.5rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .benchmark-table td {
+            padding: 1.25rem 1.5rem;
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+        }
+
+        .benchmark-table tr.highlight-row {
+            background: rgba(79, 70, 229, 0.08);
+        }
+
+        .benchmark-table tr.highlight-row td {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .badge-production {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 0.5rem;
+        }
+
+        .metric-score {
+            font-family: 'Space Grotesk', monospace;
+            font-weight: 700;
+        }
+
+        /* Preset Cards */
+        .presets-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .preset-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2.25rem 1.75rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preset-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .preset-prime::before { background: var(--accent-emerald); }
+        .preset-moderate::before { background: var(--accent-cyan); }
+        .preset-risk::before { background: var(--accent-rose); }
+
+        .preset-card:hover {
+            transform: translateY(-5px);
+            background: var(--bg-card-hover);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .preset-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .preset-type {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.4rem;
+        }
+
+        .preset-prime .preset-type { color: var(--accent-emerald); }
+        .preset-moderate .preset-type { color: var(--accent-cyan); }
+        .preset-risk .preset-type { color: var(--accent-rose); }
+
+        .preset-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .preset-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .preset-traits {
+            list-style: none;
+            margin: 1.5rem 0 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1.25rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .preset-traits li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.88rem;
+            color: #cbd5e1;
+        }
+
+        .preset-traits li span.trait-label {
+            color: var(--text-muted);
+        }
+
+        .preset-traits li span.trait-val {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .btn-test-preset {
+            display: block;
+            text-align: center;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-test-preset:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        /* Banner CTA */
+        .cta-banner {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            border-radius: var(--radius-lg);
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .cta-banner h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .cta-banner p {
+            color: #cbd5e1;
+            font-size: 1.15rem;
+            max-width: 600px;
+            margin: 0 auto 2.25rem;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            background: #060910;
+            padding: 3.5rem 2rem 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links h4 {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            margin-bottom: 1.25rem;
+            font-weight: 700;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-main);
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 3rem;
+            }
+            .hero p {
+                margin: 0 auto 2rem;
+            }
+            .hero-ctas {
+                justify-content: center;
+            }
+            .pipeline-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+            .stat-item {
+                border-right: none;
+            }
+            .presets-grid {
+                grid-template-columns: 1fr;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            nav {
+                padding: 1rem;
+            }
+            .nav-links {
+                display: none;
+            }
+            .hero h1 {
+                font-size: 2.35rem;
+            }
+            .pipeline-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav>
+        <a href="/" class="nav-logo">
+            <div class="nav-logo-icon">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+            <span>SkillWallet <small style="font-weight: 400; opacity: 0.7; font-size: 0.85rem;">Decision Engine</small></span>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#pipeline">ML Pipeline</a></li>
+            <li><a href="#benchmarks">Model Benchmarks</a></li>
+            <li><a href="#presets">Test Presets</a></li>
+            <li><a href="/analytics"><i class="fa-solid fa-chart-line" style="margin-right: 4px; color: var(--accent-cyan);"></i> Analytics & EDA</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <a href="/analytics" class="btn-secondary-nav">
+                <i class="fa-solid fa-chart-pie"></i> Visual Dashboard
+            </a>
+            <a href="/evaluate" class="btn-primary-nav">
+                <i class="fa-solid fa-bolt"></i> Launch Evaluator
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="overview">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="hero-badge-pulse"></span>
+                <span>Production ML Model Active • 85.2% ROC-AUC</span>
+            </div>
+            <h1>
+                Intelligent <span class="gradient-text">Credit Risk</span> Assessment Engine
+            </h1>
+            <p>
+                Automating credit card approval decisions using advanced Machine Learning. 
+                Trained on 150,000+ financial profiles and vintage credit bureau records to deliver 
+                transparent, sub-second risk classification with explainable feature scoring.
+            </p>
+            <div class="hero-ctas">
+                <a href="/evaluate" class="btn-hero-primary">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Evaluate Application
+                </a>
+                <a href="/analytics" class="btn-hero-secondary">
+                    <i class="fa-solid fa-chart-mixed"></i> Explore Model Insights
+                </a>
+            </div>
+        </div>
+
+        <!-- Glass Credit Card Interactive Mockup -->
+        <div class="hero-card-container">
+            <div class="glass-credit-card">
+                <div class="card-chip-row">
+                    <div class="card-chip"></div>
+                    <div class="card-status-pill">
+                        <i class="fa-solid fa-check-circle"></i> MODEL ACTIVE
+                    </div>
+                </div>
+
+                <div class="card-number">
+                    •••• •••• •••• 8842
+                </div>
+
+                <div class="card-footer">
+                    <div>
+                        <div class="card-holder-label">Applicant Class</div>
+                        <div class="card-holder-name">Prime Tier Assessment</div>
+                    </div>
+                    <div class="card-metric-badge">
+                        <div class="card-holder-label">Confidence</div>
+                        <div class="card-metric-val">87.7%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Ribbon -->
+    <div class="stats-ribbon">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-num">150,000<span class="highlight">+</span></div>
+                <div class="stat-label">Applications & Bureau Records</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">85.2<span class="highlight">%</span></div>
+                <div class="stat-label">Test ROC-AUC Score</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">20</div>
+                <div class="stat-label">Financial & Demographic Features</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">&lt; 40<span class="highlight">ms</span></div>
+                <div class="stat-label">Real-time Serverless Latency</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Machine Learning Architecture Pipeline -->
+    <section class="section-container" id="pipeline">
+        <div class="section-header">
+            <span class="section-tag">End-to-End System</span>
+            <h2 class="section-title">Machine Learning Pipeline</h2>
+            <p class="section-subtitle">
+                Engineered from raw financial registries into high-precision, low-latency scoring microservices.
+            </p>
+        </div>
+
+        <div class="pipeline-grid">
+            <div class="pipeline-card">
+                <div class="pipeline-step-badge">01</div>
+                <i class="fa-solid fa-database pipeline-icon"></i>
+                <h3 class="pipeline-title">Data Ingestion</h3>
+                <p class="pipeline-desc">Cross-matching 438,000+ raw application records and credit history registries across shared ID keys.</p>
+            </div>
+
+            <div class="pipeline-card">
+                <div class="pipeline-step-badge">02</div>
+                <i class="fa-solid fa-filter pipeline-icon"></i>
+                <h3 class="pipeline-title">EDA & Cleaning</h3>
+                <p class="pipeline-desc">Deduplication, categorical label encoding, imputation of missing occupations, and outlier boundaries.</p>
+            </div>
+
+            <div class="pipeline-card">
+                <div class="pipeline-step-badge">03</div>
+                <i class="fa-solid fa-chart-pie pipeline-icon"></i>
+                <h3 class="pipeline-title">Feature Engineering</h3>
+                <p class="pipeline-desc">Computing credit history windows, vintage seasoning, and combined family dependency indices.</p>
+            </div>
+
+            <div class="pipeline-card">
+                <div class="pipeline-step-badge">04</div>
+                <i class="fa-solid fa-sliders pipeline-icon"></i>
+                <h3 class="pipeline-title">Cost-Sensitive Training</h3>
+                <p class="pipeline-desc">Balancing class weights across the 87:13 non-default skew to minimize false approvals and credit risk.</p>
+            </div>
+
+            <div class="pipeline-card">
+                <div class="pipeline-step-badge">05</div>
+                <i class="fa-solid fa-cloud-arrow-up pipeline-icon"></i>
+                <h3 class="pipeline-title">Serverless Edge API</h3>
+                <p class="pipeline-desc">Optimized lightweight serialized model deployment on Vercel Edge with instantaneous inference.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Model Comparison Matrix -->
+    <section class="section-container" id="benchmarks">
+        <div class="section-header">
+            <span class="section-tag">Algorithm Benchmarking</span>
+            <h2 class="section-title">Comparative Model Performance</h2>
+            <p class="section-subtitle">
+                Systematic evaluation across classification algorithms on 20% holdout test validation.
+            </p>
+        </div>
+
+        <div class="benchmark-wrapper">
+            <table class="benchmark-table">
+                <thead>
+                    <tr>
+                        <th>Algorithm</th>
+                        <th>Class Balancing</th>
+                        <th>Accuracy</th>
+                        <th>Precision</th>
+                        <th>ROC-AUC</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="highlight-row">
+                        <td>
+                            <i class="fa-solid fa-sitemap" style="color: var(--accent-emerald); margin-right: 8px;"></i>
+                            <strong>Balanced Decision Tree</strong>
+                            <span class="badge-production">PRODUCTION</span>
+                        </td>
+                        <td>cost-sensitive balanced</td>
+                        <td class="metric-score">74.63%</td>
+                        <td class="metric-score">87.97%</td>
+                        <td class="metric-score" style="color: #38bdf8;">0.8524</td>
+                        <td><span style="color: var(--accent-emerald); font-weight: 600;">Active in Live API</span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <i class="fa-solid fa-tree" style="color: var(--accent-cyan); margin-right: 8px;"></i>
+                            <strong>Random Forest Classifier</strong>
+                        </td>
+                        <td>balanced subsample</td>
+                        <td class="metric-score">74.68%</td>
+                        <td class="metric-score">87.98%</td>
+                        <td class="metric-score">0.8518</td>
+                        <td>Candidate Benchmark</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <i class="fa-solid fa-bezier-curve" style="color: var(--text-muted); margin-right: 8px;"></i>
+                            <strong>Logistic Regression (Baseline)</strong>
+                        </td>
+                        <td>unweighted standard</td>
+                        <td class="metric-score">87.08%</td>
+                        <td class="metric-score">75.83%</td>
+                        <td class="metric-score">0.6239</td>
+                        <td>Baseline Comparison</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top: 1.5rem; text-align: right;">
+            <a href="/analytics" style="color: var(--accent-cyan); text-decoration: none; font-size: 0.95rem; font-weight: 600;">
+                View detailed visual charts and ROC Curves <i class="fa-solid fa-arrow-right" style="margin-left: 6px;"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Interactive 1-Click Profile Presets -->
+    <section class="section-container" id="presets">
+        <div class="section-header">
+            <span class="section-tag">Interactive Sandbox</span>
+            <h2 class="section-title">Test Pre-Configured Profiles</h2>
+            <p class="section-subtitle">
+                Explore how the model assesses diverse demographic and credit history profiles with 1-click loading.
+            </p>
+        </div>
+
+        <div class="presets-grid">
+            <!-- Prime Profile -->
+            <div class="preset-card preset-prime">
+                <div class="preset-header">
+                    <div class="preset-type"><i class="fa-solid fa-shield-check"></i> High Approval Probability</div>
+                    <h3 class="preset-title">Prime Professional</h3>
+                    <p class="preset-desc">Senior specialist with high disposable income, asset ownership, and a clean short observation window.</p>
+                </div>
+
+                <ul class="preset-traits">
+                    <li><span class="trait-label">Annual Income:</span> <span class="trait-val">$150,000 / yr</span></li>
+                    <li><span class="trait-label">Employment:</span> <span class="trait-val">15.0 Years</span></li>
+                    <li><span class="trait-label">Housing / Assets:</span> <span class="trait-val">House & Car Owner</span></li>
+                    <li><span class="trait-label">Credit Window:</span> <span class="trait-val">6 Mos (Active)</span></li>
+                    <li><span class="trait-label">Expected Decision:</span> <span class="trait-val" style="color: var(--accent-emerald);">Approved (87.7%)</span></li>
+                </ul>
+
+                <a href="/evaluate?preset=prime" class="btn-test-preset">
+                    <i class="fa-solid fa-paper-plane"></i> Load & Evaluate Profile
+                </a>
+            </div>
+
+            <!-- Moderate Profile -->
+            <div class="preset-card preset-moderate">
+                <div class="preset-header">
+                    <div class="preset-type"><i class="fa-solid fa-scale-balanced"></i> Moderate Risk Tier</div>
+                    <h3 class="preset-title">Mid-Career Associate</h3>
+                    <p class="preset-desc">Standard corporate professional with balanced family dependencies and moderate credit history depth.</p>
+                </div>
+
+                <ul class="preset-traits">
+                    <li><span class="trait-label">Annual Income:</span> <span class="trait-val">$85,000 / yr</span></li>
+                    <li><span class="trait-label">Employment:</span> <span class="trait-val">4.5 Years</span></li>
+                    <li><span class="trait-label">Housing / Assets:</span> <span class="trait-val">Municipal / Co-op</span></li>
+                    <li><span class="trait-label">Credit Window:</span> <span class="trait-val">12 Mos (Seasoned)</span></li>
+                    <li><span class="trait-label">Expected Decision:</span> <span class="trait-val" style="color: var(--accent-cyan);">Evaluated in Engine</span></li>
+                </ul>
+
+                <a href="/evaluate?preset=moderate" class="btn-test-preset">
+                    <i class="fa-solid fa-paper-plane"></i> Load & Evaluate Profile
+                </a>
+            </div>
+
+            <!-- Risky Profile -->
+            <div class="preset-card preset-risk">
+                <div class="preset-header">
+                    <div class="preset-type"><i class="fa-solid fa-triangle-exclamation"></i> High Risk / Rejection Case</div>
+                    <h3 class="preset-title">Constrained Profile</h3>
+                    <p class="preset-desc">Applicant with low annual income, high dependency burden, rented housing, and extended overdue exposure.</p>
+                </div>
+
+                <ul class="preset-traits">
+                    <li><span class="trait-label">Annual Income:</span> <span class="trait-val">$24,000 / yr</span></li>
+                    <li><span class="trait-label">Employment:</span> <span class="trait-val">0.8 Years</span></li>
+                    <li><span class="trait-label">Housing / Assets:</span> <span class="trait-val">Rented Apartment</span></li>
+                    <li><span class="trait-label">Credit Window:</span> <span class="trait-val">33 Mos (Delinquent)</span></li>
+                    <li><span class="trait-label">Expected Decision:</span> <span class="trait-val" style="color: var(--accent-rose);">Rejected (84.7%)</span></li>
+                </ul>
+
+                <a href="/evaluate?preset=risk" class="btn-test-preset">
+                    <i class="fa-solid fa-paper-plane"></i> Load & Evaluate Profile
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Banner -->
+    <section class="section-container">
+        <div class="cta-banner">
+            <h2>Ready to Test the Decision Engine?</h2>
+            <p>Input applicant parameters manually or benchmark model features with interactive visual analytics.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/evaluate" class="btn-hero-primary">
+                    <i class="fa-solid fa-play"></i> Launch Evaluator Form
+                </a>
+                <a href="/analytics" class="btn-hero-secondary">
+                    <i class="fa-solid fa-chart-column"></i> Open Analytics Dashboard
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <div class="footer-logo">
+                    <div class="nav-logo-icon" style="width: 28px; height: 28px; font-size: 0.8rem;">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <span>SkillWallet Internship</span>
+                </div>
+                <p style="line-height: 1.6; max-width: 420px; font-size: 0.9rem;">
+                    Credit Card Approval Prediction is an enterprise AI/ML project engineered to demonstrate 
+                    production-grade data pipelines, cost-sensitive classification, and explainable credit risk modeling.
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="/">Home Overview</a></li>
+                    <li><a href="/evaluate">Live Evaluator</a></li>
+                    <li><a href="/analytics">EDA & Visual Charts</a></li>
+                    <li><a href="https://github.com/Bhuwinrag/Credit-Card-Skillwallet-Internship" target="_blank">GitHub Repository</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4>Tech Stack</h4>
+                <ul>
+                    <li>Python 3.10+ / Scikit-Learn</li>
+                    <li>Flask 3.0 Serverless Microservice</li>
+                    <li>Pandas & NumPy Data Processing</li>
+                    <li>Chart.js Interactive Visualizations</li>
+                    <li>Vercel Edge Cloud Deployment</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div>© SkillWallet Internship Project • Credit Decision Engine</div>
+            <div>Deployed on Vercel • Automated Continuous Deployment</div>
+        </div>
+    </footer>
+
+</body>
+</html>

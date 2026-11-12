@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillWallet | Live Credit Application Evaluator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --bg-card: rgba(18, 24, 38, 0.75);
+            --bg-input: rgba(15, 23, 42, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-focus: #6366f1;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.35);
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-rose: #f43f5e;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 15%, rgba(79, 70, 229, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 90% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 45%);
+            background-attachment: fixed;
+            line-height: 1.6;
+        }
+
+        /* Nav */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(16px);
+            background: rgba(9, 13, 22, 0.85);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--text-main);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 5rem;
+        }
+
+        .eval-header {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .eval-tag {
+            color: var(--accent-cyan);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .eval-title {
+            font-size: 2.6rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.75rem;
+        }
+
+        .eval-desc {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        /* Preset Toolbar */
+        .presets-toolbar {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            backdrop-filter: blur(12px);
+        }
+
+        .presets-label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .presets-buttons {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-preset {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: #cbd5e1;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-preset:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .btn-preset.prime:hover {
+            border-color: var(--accent-emerald);
+            color: var(--accent-emerald);
+        }
+
+        .btn-preset.risk:hover {
+            border-color: var(--accent-rose);
+            color: var(--accent-rose);
+        }
+
+        /* Form Layout */
+        .form-section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(12px);
+        }
+
+        .form-section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.75rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background: rgba(79, 70, 229, 0.2);
+            color: #a5b4fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem 1.75rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .input-group label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .input-group label span.hint {
+            font-weight: 400;
+            color: #64748b;
+        }
+
+        .input-group input,
+        .input-group select {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem 1rem;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: rgba(20, 29, 52, 0.9);
+        }
+
+        .input-group select option {
+            background: #0f172a;
+            color: #ffffff;
+        }
+
+        /* Submit Area */
+        .submit-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .submit-info {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .btn-evaluate {
+            padding: 0.9rem 2.5rem;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 10px 25px -5px var(--primary-glow);
+            transition: all 0.25s ease;
+        }
+
+        .btn-evaluate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(79, 70, 229, 0.6);
+        }
+
+        .btn-evaluate:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .presets-toolbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .submit-wrapper {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn-evaluate {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Nav -->
+    <nav>
+        <a href="/" class="nav-logo">
+            <div class="nav-logo-icon">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+            <span>SkillWallet <small style="font-weight: 400; opacity: 0.7; font-size: 0.85rem;">Decision Engine</small></span>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="/">Overview</a></li>
+            <li><a href="/evaluate" class="active">Live Evaluator</a></li>
+            <li><a href="/analytics"><i class="fa-solid fa-chart-line" style="margin-right: 4px; color: var(--accent-cyan);"></i> Analytics Dashboard</a></li>
+            <li><a href="https://github.com/Bhuwinrag/Credit-Card-Skillwallet-Internship" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a></li>
+        </ul>
+
+        <div>
+            <a href="/analytics" class="btn-preset">
+                <i class="fa-solid fa-chart-pie"></i> View Model Analytics
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="eval-header">
+            <span class="eval-tag">Production Inference Service</span>
+            <h1 class="eval-title">Applicant Risk Evaluation</h1>
+            <p class="eval-desc">
+                Submit demographic, financial, and vintage bureau indicators to generate an instant, 
+                explainable credit card approval decision.
+            </p>
+        </div>
+
+        <!-- Presets Toolbar -->
+        <div class="presets-toolbar">
+            <div class="presets-label">
+                <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent-cyan);"></i>
+                <span>Quick Scenario Loaders:</span>
+            </div>
+            <div class="presets-buttons">
+                <button type="button" class="btn-preset prime" onclick="loadPreset('prime')">
+                    <i class="fa-solid fa-star" style="color: var(--accent-emerald);"></i> Prime Applicant (Approved)
+                </button>
+                <button type="button" class="btn-preset" onclick="loadPreset('moderate')">
+                    <i class="fa-solid fa-scale-balanced" style="color: var(--accent-cyan);"></i> Moderate Associate
+                </button>
+                <button type="button" class="btn-preset risk" onclick="loadPreset('risk')">
+                    <i class="fa-solid fa-triangle-exclamation" style="color: var(--accent-rose);"></i> Risky Applicant (Declined)
+                </button>
+            </div>
+        </div>
+
+        <!-- The Evaluation Form -->
+        <form id="evaluationForm" action="/predict" method="POST">
+
+            <!-- Section 1: Demographics -->
+            <div class="form-section-card">
+                <div class="form-section-header">
+                    <div class="section-icon"><i class="fa-solid fa-user"></i></div>
+                    <h2 class="section-title">Demographics & Personal</h2>
+                </div>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Gender</label>
+                        <select name="CODE_GENDER" id="CODE_GENDER" required>
+                            <option value="1">Male</option>
+                            <option value="0">Female</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Age <span class="hint">(Years)</span></label>
+                        <input type="number" name="DAYS_BIRTH" id="DAYS_BIRTH" placeholder="e.g. 38" min="18" max="100" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Education Level</label>
+                        <select name="NAME_EDUCATION_TYPE" id="NAME_EDUCATION_TYPE" required>
+                            <option value="0">Higher education</option>
+                            <option value="1">Secondary / special</option>
+                            <option value="2">Incomplete higher</option>
+                            <option value="3">Lower secondary</option>
+                            <option value="4">Academic degree</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Family Status</label>
+                        <select name="NAME_FAMILY_STATUS" id="NAME_FAMILY_STATUS" required>
+                            <option value="0">Married</option>
+                            <option value="1">Single / not married</option>
+                            <option value="2">Civil marriage</option>
+                            <option value="3">Separated</option>
+                            <option value="4">Widow</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Financial & Assets -->
+            <div class="form-section-card">
+                <div class="form-section-header">
+                    <div class="section-icon"><i class="fa-solid fa-wallet"></i></div>
+                    <h2 class="section-title">Financial & Asset Profile</h2>
+                </div>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Total Annual Income <span class="hint">($ USD)</span></label>
+                        <input type="number" name="AMT_INCOME_TOTAL" id="AMT_INCOME_TOTAL" placeholder="e.g. 85000" min="0" step="any" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Income Type</label>
+                        <select name="NAME_INCOME_TYPE" id="NAME_INCOME_TYPE" required>
+                            <option value="0">Working</option>
+                            <option value="1">Commercial Associate</option>
+                            <option value="2">Pensioner</option>
+                            <option value="3">State Servant</option>
+                            <option value="4">Student</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Employment Tenure <span class="hint">(Years)</span></label>
+                        <input type="number" name="DAYS_EMPLOYED" id="DAYS_EMPLOYED" placeholder="e.g. 8" min="0" max="60" step="any" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Housing Arrangement</label>
+                        <select name="NAME_HOUSING_TYPE" id="NAME_HOUSING_TYPE" required>
+                            <option value="0">House / apartment</option>
+                            <option value="1">With parents</option>
+                            <option value="2">Municipal apartment</option>
+                            <option value="3">Rented apartment</option>
+                            <option value="4">Office apartment</option>
+                            <option value="5">Co-op apartment</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Vehicle Ownership</label>
+                        <select name="FLAG_OWN_CAR" id="FLAG_OWN_CAR" required>
+                            <option value="1">Yes (Owns Car)</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Real Estate Ownership</label>
+                        <select name="FLAG_OWN_REALTY" id="FLAG_OWN_REALTY" required>
+                            <option value="1">Yes (Owns Property)</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Household & Contacts -->
+            <div class="form-section-card">
+                <div class="form-section-header">
+                    <div class="section-icon"><i class="fa-solid fa-users"></i></div>
+                    <h2 class="section-title">Household & Contact Verification</h2>
+                </div>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Total Family Members</label>
+                        <input type="number" name="CNT_FAM_MEMBERS" id="CNT_FAM_MEMBERS" placeholder="e.g. 2" min="1" required oninput="updateDependency()">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Number of Children</label>
+                        <input type="number" name="CNT_CHILDREN" id="CNT_CHILDREN" placeholder="e.g. 0" min="0" required oninput="updateDependency()">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Total Dependents <span class="hint">(Members + Children)</span></label>
+                        <input type="number" name="FAMILY_DEPENDENCY" id="FAMILY_DEPENDENCY" placeholder="e.g. 2" min="0" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Has Mobile Phone?</label>
+                        <select name="FLAG_MOBIL" id="FLAG_MOBIL" required>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Has Work Phone?</label>
+                        <select name="FLAG_WORK_PHONE" id="FLAG_WORK_PHONE" required>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Has Landline?</label>
+                        <select name="FLAG_PHONE" id="FLAG_PHONE" required>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Has Registered Email?</label>
+                        <select name="FLAG_EMAIL" id="FLAG_EMAIL" required>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Bureau Record & History -->
+            <div class="form-section-card">
+                <div class="form-section-header">
+                    <div class="section-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                    <h2 class="section-title">Credit Bureau Vintage Window</h2>
+                </div>
+                <div style="background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.25); border-radius: var(--radius-sm); padding: 0.85rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #cbd5e1;">
+                    <i class="fa-solid fa-circle-info" style="color: var(--accent-cyan); margin-right: 6px;"></i>
+                    <strong>Bureau History Convention:</strong> <code>open_month</code> represents months elapsed since the oldest credit account opened (negative, e.g. -6 or -24). <code>window</code> is the total observation depth in months.
+                </div>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Oldest Record <span class="hint">(Months Ago, e.g. -6)</span></label>
+                        <input type="number" name="open_month" id="open_month" placeholder="e.g. -6" step="any" required oninput="calculateWindow()">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Newest Record <span class="hint">(Months Ago, e.g. 0)</span></label>
+                        <input type="number" name="end_month" id="end_month" placeholder="e.g. 0" step="any" required oninput="calculateWindow()">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Credit Window <span class="hint">(Months Depth)</span></label>
+                        <input type="number" name="window" id="window" placeholder="e.g. 6" min="0" step="any" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="submit-wrapper">
+                <div class="submit-info">
+                    <i class="fa-solid fa-shield-halved" style="color: var(--accent-emerald);"></i>
+                    <span>Trained Balanced Decision Tree with class_weight weighting.</span>
+                </div>
+                <button type="submit" class="btn-evaluate" id="btnSubmit">
+                    <span>Evaluate Application</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Script for Presets & Helpers -->
+    <script>
+        const PRESETS = {
+            prime: {
+                CODE_GENDER: "1",
+                FLAG_OWN_CAR: "1",
+                FLAG_OWN_REALTY: "1",
+                CNT_CHILDREN: "0",
+                AMT_INCOME_TOTAL: "150000",
+                NAME_INCOME_TYPE: "0",
+                NAME_EDUCATION_TYPE: "0",
+                NAME_FAMILY_STATUS: "0",
+                NAME_HOUSING_TYPE: "0",
+                DAYS_BIRTH: "40",
+                DAYS_EMPLOYED: "12",
+                FLAG_MOBIL: "1",
+                FLAG_WORK_PHONE: "1",
+                FLAG_PHONE: "1",
+                FLAG_EMAIL: "1",
+                CNT_FAM_MEMBERS: "2",
+                FAMILY_DEPENDENCY: "2",
+                open_month: "-6",
+                end_month: "0",
+                window: "6"
+            },
+            moderate: {
+                CODE_GENDER: "0",
+                FLAG_OWN_CAR: "1",
+                FLAG_OWN_REALTY: "0",
+                CNT_CHILDREN: "1",
+                AMT_INCOME_TOTAL: "85000",
+                NAME_INCOME_TYPE: "1",
+                NAME_EDUCATION_TYPE: "1",
+                NAME_FAMILY_STATUS: "0",
+                NAME_HOUSING_TYPE: "0",
+                DAYS_BIRTH: "32",
+                DAYS_EMPLOYED: "5",
+                FLAG_MOBIL: "1",
+                FLAG_WORK_PHONE: "1",
+                FLAG_PHONE: "0",
+                FLAG_EMAIL: "1",
+                CNT_FAM_MEMBERS: "3",
+                FAMILY_DEPENDENCY: "4",
+                open_month: "-12",
+                end_month: "0",
+                window: "12"
+            },
+            risk: {
+                CODE_GENDER: "1",
+                FLAG_OWN_CAR: "0",
+                FLAG_OWN_REALTY: "0",
+                CNT_CHILDREN: "3",
+                AMT_INCOME_TOTAL: "22000",
+                NAME_INCOME_TYPE: "2",
+                NAME_EDUCATION_TYPE: "3",
+                NAME_FAMILY_STATUS: "4",
+                NAME_HOUSING_TYPE: "3",
+                DAYS_BIRTH: "24",
+                DAYS_EMPLOYED: "0.8",
+                FLAG_MOBIL: "1",
+                FLAG_WORK_PHONE: "0",
+                FLAG_PHONE: "0",
+                FLAG_EMAIL: "0",
+                CNT_FAM_MEMBERS: "4",
+                FAMILY_DEPENDENCY: "7",
+                open_month: "-33",
+                end_month: "0",
+                window: "33"
+            }
+        };
+
+        function loadPreset(key) {
+            const data = PRESETS[key];
+            if (!data) return;
+            for (const [k, v] of Object.entries(data)) {
+                const el = document.getElementById(k);
+                if (el) el.value = v;
+            }
+        }
+
+        function updateDependency() {
+            const fam = parseFloat(document.getElementById('CNT_FAM_MEMBERS').value) || 0;
+            const child = parseFloat(document.getElementById('CNT_CHILDREN').value) || 0;
+            document.getElementById('FAMILY_DEPENDENCY').value = fam + child;
+        }
+
+        function calculateWindow() {
+            const open = parseFloat(document.getElementById('open_month').value) || 0;
+            const end = parseFloat(document.getElementById('end_month').value) || 0;
+            const win = Math.abs(end - open);
+            document.getElementById('window').value = win;
+        }
+
+        // Check for URL param preset
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const preset = params.get('preset');
+            if (preset && PRESETS[preset]) {
+                loadPreset(preset);
+            } else {
+                // Default to Prime if empty
+                loadPreset('prime');
+            }
+        });
+    </script>
+</body>
+</html>

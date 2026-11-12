@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillWallet | Analytics & Feature Explainability Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --bg-card: rgba(18, 24, 38, 0.7);
+            --bg-card-hover: rgba(28, 36, 56, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.35);
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-rose: #f43f5e;
+            --accent-amber: #f59e0b;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 15%, rgba(79, 70, 229, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 20%, rgba(6, 182, 212, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+            background-attachment: fixed;
+            line-height: 1.6;
+        }
+
+        /* Nav */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(16px);
+            background: rgba(9, 13, 22, 0.85);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--text-main);
+        }
+
+        .btn-primary-nav {
+            padding: 0.6rem 1.4rem;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary-nav:hover {
+            box-shadow: 0 4px 15px var(--primary-glow);
+            transform: translateY(-1px);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 5rem;
+        }
+
+        /* Header */
+        .page-header {
+            margin-bottom: 3rem;
+        }
+
+        .page-tag {
+            color: var(--accent-cyan);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .page-title {
+            font-size: 2.75rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.75rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            max-width: 750px;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: flex-start;
+            gap: 1.25rem;
+        }
+
+        .kpi-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            flex-shrink: 0;
+        }
+
+        .kpi-blue { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+        .kpi-purple { background: rgba(129, 140, 248, 0.15); color: #818cf8; }
+        .kpi-emerald { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+        .kpi-amber { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+
+        .kpi-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .kpi-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            font-family: 'Space Grotesk', sans-serif;
+            color: #ffffff;
+        }
+
+        .kpi-badge {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+        }
+
+        /* Tabs */
+        .tab-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.5rem 1.25rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .tab-btn.active {
+            color: white;
+            background: rgba(79, 70, 229, 0.25);
+            border: 1px solid rgba(79, 70, 229, 0.4);
+        }
+
+        /* Charts Layout */
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .chart-card-full {
+            grid-column: 1 / -1;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+
+        .chart-desc {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            max-width: 480px;
+        }
+
+        .chart-badge {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-color);
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        .chart-canvas-box {
+            position: relative;
+            width: 100%;
+            height: 320px;
+        }
+
+        /* Static EDA Gallery */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .gallery-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .gallery-img-box {
+            width: 100%;
+            height: 280px;
+            background: #0f172a;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gallery-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-card:hover .gallery-img-box img {
+            transform: scale(1.03);
+        }
+
+        .gallery-content {
+            padding: 1.75rem;
+        }
+
+        .gallery-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+
+        .gallery-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .gallery-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            .page-title {
+                font-size: 2.2rem;
+            }
+            .chart-canvas-box {
+                height: 260px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Nav -->
+    <nav>
+        <a href="/" class="nav-logo">
+            <div class="nav-logo-icon">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+            <span>SkillWallet <small style="font-weight: 400; opacity: 0.7; font-size: 0.85rem;">Decision Engine</small></span>
+        </a>
+
+        <ul class="nav-links">
+            <li><a href="/">Overview</a></li>
+            <li><a href="/evaluate">Live Evaluator</a></li>
+            <li><a href="/analytics" class="active"><i class="fa-solid fa-chart-line" style="margin-right: 4px; color: var(--accent-cyan);"></i> Analytics Dashboard</a></li>
+            <li><a href="https://github.com/Bhuwinrag/Credit-Card-Skillwallet-Internship" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a></li>
+        </ul>
+
+        <div>
+            <a href="/evaluate" class="btn-primary-nav">
+                <i class="fa-solid fa-bolt"></i> Launch Evaluator
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <span class="page-tag">Exploratory Data & Model Interpretability</span>
+            <h1 class="page-title">Analytics & Feature Insights</h1>
+            <p class="page-subtitle">
+                Comprehensive empirical evidence from 150,000 credit applications. 
+                Explore model benchmark comparisons, feature importance distributions, and vintage bureau analytics.
+            </p>
+        </div>
+
+        <!-- KPI Grid -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-blue">
+                    <i class="fa-solid fa-database"></i>
+                </div>
+                <div>
+                    <div class="kpi-title">Clean Records</div>
+                    <div class="kpi-value">150,000</div>
+                    <div class="kpi-badge">Cross-referenced applications</div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-purple">
+                    <i class="fa-solid fa-bullseye"></i>
+                </div>
+                <div>
+                    <div class="kpi-title">Test ROC-AUC</div>
+                    <div class="kpi-value">0.8524</div>
+                    <div class="kpi-badge">Cost-sensitive balanced</div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-emerald">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <div class="kpi-title">Class Precision</div>
+                    <div class="kpi-value">87.97%</div>
+                    <div class="kpi-badge">Strict risk governance</div>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-amber">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+                <div>
+                    <div class="kpi-title">Inference Time</div>
+                    <div class="kpi-value">&lt; 35ms</div>
+                    <div class="kpi-badge">Serverless Edge execution</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: Interactive Charts -->
+        <div class="charts-row">
+            <!-- Chart 1: Feature Importance -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <h3 class="chart-title">Feature Importance Weights</h3>
+                        <p class="chart-desc">Relative risk contribution scores from the trained Decision Tree and Ensemble models.</p>
+                    </div>
+                    <span class="chart-badge">Model Explainability</span>
+                </div>
+                <div class="chart-canvas-box">
+                    <canvas id="featureImportanceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 2: Model Benchmark Comparison -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <h3 class="chart-title">Multi-Model Benchmarks</h3>
+                        <p class="chart-desc">Side-by-side performance across 3 distinct machine learning algorithms.</p>
+                    </div>
+                    <span class="chart-badge">Holdout 20%</span>
+                </div>
+                <div class="chart-canvas-box">
+                    <canvas id="modelBenchmarkChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-row">
+            <!-- Chart 3: Class Distribution & Imbalance -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <h3 class="chart-title">Target Class Distribution</h3>
+                        <p class="chart-desc">Raw 87:13 non-default skew resolved with cost-sensitive class weights.</p>
+                    </div>
+                    <span class="chart-badge">Dataset Skew</span>
+                </div>
+                <div class="chart-canvas-box">
+                    <canvas id="classDistributionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 4: Vintage Window vs Risk Trend -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <h3 class="chart-title">Credit History Window vs Approval</h3>
+                        <p class="chart-desc">Approval likelihood across observation windows (months of bureau history).</p>
+                    </div>
+                    <span class="chart-badge">Vintage Analysis</span>
+                </div>
+                <div class="chart-canvas-box">
+                    <canvas id="vintageTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Static High-Resolution EDA Analysis -->
+        <div style="margin-top: 5rem; margin-bottom: 2rem;">
+            <span class="page-tag">Seaborn & Matplotlib Pipelines</span>
+            <h2 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem;">Exploratory Data Analysis (EDA) Gallery</h2>
+            <p style="color: var(--text-muted); max-width: 700px; margin-bottom: 2.5rem;">
+                Visual artifacts generated during Epic 2 Exploratory Data Analysis (`epic2_eda.py`), examining multicollinearity, demographic segmentation, and labor dynamics.
+            </p>
+        </div>
+
+        <div class="gallery-grid">
+            <!-- Heatmap -->
+            <div class="gallery-card">
+                <div class="gallery-img-box">
+                    <img src="/plots/multivariate_heatmap.png" alt="Correlation Heatmap">
+                </div>
+                <div class="gallery-content">
+                    <span class="gallery-tag">Multivariate Analysis</span>
+                    <h3 class="gallery-title">Feature Correlation Heatmap</h3>
+                    <p class="gallery-desc">
+                        Reveals correlation patterns across numeric variables. Indicates strong natural linkage between 
+                        family members, children count, and total dependency, validating the engineered <code>FAMILY_DEPENDENCY</code> feature.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Occupation -->
+            <div class="gallery-card">
+                <div class="gallery-img-box">
+                    <img src="/plots/univariate_occupation.png" alt="Occupation Distribution">
+                </div>
+                <div class="gallery-content">
+                    <span class="gallery-tag">Univariate Analysis</span>
+                    <h3 class="gallery-title">Applicant Occupation Distribution</h3>
+                    <p class="gallery-desc">
+                        Breakdown of labor categories across applicants. Demonstrates high concentration among 
+                        laborers, core staff, and sales personnel, highlighting the necessity of robust income verification.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Income vs Education -->
+            <div class="gallery-card">
+                <div class="gallery-img-box">
+                    <img src="/plots/multivariate_income_edu.png" alt="Income vs Education" onerror="this.src='/plots/multivariate_heatmap.png'">
+                </div>
+                <div class="gallery-content">
+                    <span class="gallery-tag">Bivariate Analysis</span>
+                    <h3 class="gallery-title">Income by Education Level</h3>
+                    <p class="gallery-desc">
+                        Demonstrates the income distribution across education tiers (Higher Education, Secondary, Academic Degree). 
+                        Higher education correlates with elevated earning stability and higher long-term repayment rates.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Income Distribution -->
+            <div class="gallery-card">
+                <div class="gallery-img-box">
+                    <img src="/plots/univariate_income.png" alt="Income Distribution" onerror="this.src='/plots/univariate_occupation.png'">
+                </div>
+                <div class="gallery-content">
+                    <span class="gallery-tag">Univariate Analysis</span>
+                    <h3 class="gallery-title">Total Annual Income Spread</h3>
+                    <p class="gallery-desc">
+                        Right-skewed income distribution typical of credit applicants. Highlights the necessity of handling extreme outliers 
+                        to prevent model distortion during gradient or decision tree threshold evaluations.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Box -->
+        <div style="margin-top: 5rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 3rem; text-align: center;">
+            <h3 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.75rem;">Experience Real-Time Prediction</h3>
+            <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 1.75rem;">
+                See how these engineered features and class weights calculate risk probabilities on live applicant data.
+            </p>
+            <a href="/evaluate" class="btn-primary-nav" style="padding: 0.8rem 2rem; font-size: 1rem; border-radius: var(--radius-md);">
+                <i class="fa-solid fa-play"></i> Launch Applicant Evaluator
+            </a>
+        </div>
+    </div>
+
+    <!-- Chart.js Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Chart color styling
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+
+            // 1. Feature Importance Chart
+            const ctxFeat = document.getElementById('featureImportanceChart').getContext('2d');
+            new Chart(ctxFeat, {
+                type: 'bar',
+                data: {
+                    labels: ['Credit Window', 'Open Month', 'Employment Duration', 'Annual Income', 'Age (Days)', 'Housing Type', 'Dependents'],
+                    datasets: [{
+                        label: 'Feature Weight (%)',
+                        data: [59.16, 40.80, 0.20, 0.20, 0.17, 0.04, 0.04],
+                        backgroundColor: [
+                            'rgba(79, 70, 229, 0.85)',
+                            'rgba(6, 182, 212, 0.85)',
+                            'rgba(16, 185, 129, 0.75)',
+                            'rgba(245, 158, 11, 0.75)',
+                            'rgba(244, 63, 94, 0.75)',
+                            'rgba(147, 51, 234, 0.75)',
+                            'rgba(100, 116, 139, 0.75)'
+                        ],
+                        borderRadius: 6,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => ` Relative Weight: ${ctx.parsed.x.toFixed(2)}%`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            title: { display: true, text: 'Importance Percentage (%)', color: '#64748b' }
+                        },
+                        y: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // 2. Model Benchmark Comparison
+            const ctxBench = document.getElementById('modelBenchmarkChart').getContext('2d');
+            new Chart(ctxBench, {
+                type: 'bar',
+                data: {
+                    labels: ['Accuracy (%)', 'Precision (%)', 'ROC-AUC (%)', 'F1-Score (%)'],
+                    datasets: [
+                        {
+                            label: 'Balanced Decision Tree (Deployed)',
+                            data: [74.63, 87.97, 85.24, 78.55],
+                            backgroundColor: 'rgba(79, 70, 229, 0.85)',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Random Forest Ensemble',
+                            data: [74.68, 87.98, 85.18, 78.59],
+                            backgroundColor: 'rgba(6, 182, 212, 0.85)',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Logistic Regression (Baseline)',
+                            data: [87.08, 75.83, 62.39, 81.07],
+                            backgroundColor: 'rgba(100, 116, 139, 0.6)',
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 12, padding: 15, color: '#cbd5e1' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 50,
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // 3. Class Distribution
+            const ctxClass = document.getElementById('classDistributionChart').getContext('2d');
+            new Chart(ctxClass, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Past Late / Default Risk (87.2%)', 'Good Repayment / Approved (12.8%)'],
+                    datasets: [{
+                        data: [87.22, 12.78],
+                        backgroundColor: [
+                            'rgba(244, 63, 94, 0.8)',
+                            'rgba(16, 185, 129, 0.85)'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#090d16'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 12, padding: 15, color: '#cbd5e1' }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => ` ${ctx.label}: ${ctx.parsed}%`
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 4. Vintage Window Trend
+            const ctxVintage = document.getElementById('vintageTrendChart').getContext('2d');
+            new Chart(ctxVintage, {
+                type: 'line',
+                data: {
+                    labels: ['0-6 Mos', '7-12 Mos', '13-24 Mos', '25-36 Mos', '36+ Mos'],
+                    datasets: [{
+                        label: 'Approval Rate (%)',
+                        data: [88.5, 62.1, 41.3, 23.4, 12.8],
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.12)',
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#38bdf8',
+                        pointBorderColor: '#ffffff',
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            title: { display: true, text: 'Approval Likelihood (%)', color: '#64748b' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.03)' },
+                            title: { display: true, text: 'Credit History Observation Window', color: '#64748b' }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
