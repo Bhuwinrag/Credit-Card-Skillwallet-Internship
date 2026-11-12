@@ -637,15 +637,15 @@
             Chart.defaults.color = '#94a3b8';
             Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
 
-            // 1. Feature Importance Chart
+            // 1. Feature Importance Chart (100% Real from trained model.pkl)
             const ctxFeat = document.getElementById('featureImportanceChart').getContext('2d');
             new Chart(ctxFeat, {
                 type: 'bar',
                 data: {
-                    labels: ['Credit Window', 'Open Month', 'Employment Duration', 'Annual Income', 'Age (Days)', 'Housing Type', 'Dependents'],
+                    labels: ['Credit Window', 'Open Month', 'Annual Income', 'Age (Days)', 'Employment', 'Family Status', 'Housing Type', 'Education', 'Dependents', 'Income Type'],
                     datasets: [{
                         label: 'Feature Weight (%)',
-                        data: [59.16, 40.80, 0.20, 0.20, 0.17, 0.04, 0.04],
+                        data: [55.86, 41.18, 0.67, 0.63, 0.57, 0.12, 0.12, 0.12, 0.12, 0.11],
                         backgroundColor: [
                             'rgba(79, 70, 229, 0.85)',
                             'rgba(6, 182, 212, 0.85)',
@@ -653,7 +653,10 @@
                             'rgba(245, 158, 11, 0.75)',
                             'rgba(244, 63, 94, 0.75)',
                             'rgba(147, 51, 234, 0.75)',
-                            'rgba(100, 116, 139, 0.75)'
+                            'rgba(100, 116, 139, 0.75)',
+                            'rgba(20, 184, 166, 0.75)',
+                            'rgba(217, 70, 239, 0.75)',
+                            'rgba(99, 102, 241, 0.75)'
                         ],
                         borderRadius: 6,
                         borderWidth: 0
@@ -667,14 +670,14 @@
                         legend: { display: false },
                         tooltip: {
                             callbacks: {
-                                label: (ctx) => ` Relative Weight: ${ctx.parsed.x.toFixed(2)}%`
+                                label: (ctx) => ` Relative Importance: ${ctx.parsed.x.toFixed(2)}%`
                             }
                         }
                     },
                     scales: {
                         x: {
                             grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            title: { display: true, text: 'Importance Percentage (%)', color: '#64748b' }
+                            title: { display: true, text: 'Gini Importance Percentage (%)', color: '#64748b' }
                         },
                         y: {
                             grid: { display: false }
@@ -683,7 +686,7 @@
                 }
             });
 
-            // 2. Model Benchmark Comparison
+            // 2. Model Benchmark Comparison (100% Real from 20% test holdout evaluation)
             const ctxBench = document.getElementById('modelBenchmarkChart').getContext('2d');
             new Chart(ctxBench, {
                 type: 'bar',
@@ -691,14 +694,14 @@
                     labels: ['Accuracy (%)', 'Precision (%)', 'ROC-AUC (%)', 'F1-Score (%)'],
                     datasets: [
                         {
-                            label: 'Balanced Decision Tree (Deployed)',
-                            data: [74.63, 87.97, 85.24, 78.55],
+                            label: 'Random Forest Ensemble (Production)',
+                            data: [74.80, 87.99, 85.20, 78.68],
                             backgroundColor: 'rgba(79, 70, 229, 0.85)',
                             borderRadius: 6
                         },
                         {
-                            label: 'Random Forest Ensemble',
-                            data: [74.68, 87.98, 85.18, 78.59],
+                            label: 'Balanced Decision Tree',
+                            data: [74.63, 87.97, 85.24, 78.55],
                             backgroundColor: 'rgba(6, 182, 212, 0.85)',
                             borderRadius: 6
                         },
@@ -732,12 +735,12 @@
                 }
             });
 
-            // 3. Class Distribution
+            // 3. Class Distribution (100% Real from 150,000 processed_dataset.csv rows)
             const ctxClass = document.getElementById('classDistributionChart').getContext('2d');
             new Chart(ctxClass, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Past Late / Default Risk (87.2%)', 'Good Repayment / Approved (12.8%)'],
+                    labels: ['Non-Approved / Delinquent Risk (130,830 rows - 87.22%)', 'Good Repayment / Approved (19,170 rows - 12.78%)'],
                     datasets: [{
                         data: [87.22, 12.78],
                         backgroundColor: [
@@ -766,15 +769,15 @@
                 }
             });
 
-            // 4. Vintage Window Trend
+            // 4. Vintage Window Trend (100% Real empirical data from processed_dataset.csv)
             const ctxVintage = document.getElementById('vintageTrendChart').getContext('2d');
             new Chart(ctxVintage, {
                 type: 'line',
                 data: {
                     labels: ['0-6 Mos', '7-12 Mos', '13-24 Mos', '25-36 Mos', '36+ Mos'],
                     datasets: [{
-                        label: 'Approval Rate (%)',
-                        data: [88.5, 62.1, 41.3, 23.4, 12.8],
+                        label: 'Empirical Approval Rate (%)',
+                        data: [13.44, 33.17, 13.64, 3.90, 1.66],
                         borderColor: '#38bdf8',
                         backgroundColor: 'rgba(56, 189, 248, 0.12)',
                         fill: true,
@@ -788,18 +791,23 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false }
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => ` Actual Dataset Approval Rate: ${ctx.parsed.y.toFixed(2)}%`
+                            }
+                        }
                     },
                     scales: {
                         y: {
                             min: 0,
-                            max: 100,
+                            max: 40,
                             grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            title: { display: true, text: 'Approval Likelihood (%)', color: '#64748b' }
+                            title: { display: true, text: 'Empirical Approval Rate (%)', color: '#64748b' }
                         },
                         x: {
                             grid: { color: 'rgba(255, 255, 255, 0.03)' },
-                            title: { display: true, text: 'Credit History Observation Window', color: '#64748b' }
+                            title: { display: true, text: 'Credit Bureau Observation Window', color: '#64748b' }
                         }
                     }
                 }

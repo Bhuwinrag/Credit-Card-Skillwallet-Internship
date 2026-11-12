@@ -3,6 +3,10 @@ from flask import Flask, render_template, request, jsonify, send_from_directory
 import numpy as np
 import traceback
 import os
+import warnings
+
+# Suppress sklearn feature names user warnings
+warnings.filterwarnings("ignore", category=UserWarning)
 
 app = Flask(__name__)
 
@@ -267,13 +271,37 @@ def api_analytics():
         'status': 'success',
         'dataset_size': 150000,
         'features_count': 20,
-        'target_distribution': {'rejected_or_late': 87.22, 'approved_good': 12.78},
-        'champion_model': 'Balanced Decision Tree',
+        'target_distribution': {
+            'rejected_or_late_pct': 87.22,
+            'approved_good_pct': 12.78,
+            'rejected_count': 130830,
+            'approved_count': 19170
+        },
+        'champion_model': 'Balanced Random Forest Ensemble',
         'metrics': {
-            'roc_auc': 0.8524,
-            'precision': 0.8797,
-            'accuracy': 0.7463,
-            'f1_score': 0.7855
+            'accuracy': 0.7480,
+            'precision': 0.8799,
+            'roc_auc': 0.8520,
+            'f1_score': 0.7868
+        },
+        'top_features_gini_pct': {
+            'window': 55.86,
+            'open_month': 41.18,
+            'AMT_INCOME_TOTAL': 0.67,
+            'DAYS_BIRTH': 0.63,
+            'DAYS_EMPLOYED': 0.57,
+            'NAME_FAMILY_STATUS': 0.12,
+            'NAME_HOUSING_TYPE': 0.12,
+            'NAME_EDUCATION_TYPE': 0.12,
+            'FAMILY_DEPENDENCY': 0.12,
+            'NAME_INCOME_TYPE': 0.11
+        },
+        'vintage_window_approval_rates_pct': {
+            '0-6 Mos': 13.44,
+            '7-12 Mos': 33.17,
+            '13-24 Mos': 13.64,
+            '25-36 Mos': 3.90,
+            '36+ Mos': 1.66
         }
     })
 

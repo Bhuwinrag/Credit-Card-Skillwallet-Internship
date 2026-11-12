@@ -56,8 +56,8 @@ Evaluated on a 20% holdout test partition of 150,000 merged bureau and applicant
 
 | Algorithm | Balancing Strategy | Accuracy | Precision | F1-Score | ROC-AUC | Deployment Status |
 | :--- | :--- | :---: | :---: | :---: | :---: | :--- |
-| **Balanced Decision Tree** | `class_weight='balanced'` | **74.63%** | **87.97%** | **78.55%** | **0.8524** | **Production Deployed** |
-| **Random Forest Ensemble** | `balanced_subsample` | 74.68% | 87.98% | 78.59% | 0.8518 | Benchmark Candidate |
+| **Random Forest Ensemble** | `balanced_subsample` | **74.80%** | **87.99%** | **78.68%** | **0.8520** | **Production Deployed** |
+| **Balanced Decision Tree** | `class_weight='balanced'` | 74.63% | 87.97% | 78.55% | 0.8524 | Benchmark Candidate |
 | **Logistic Regression** | Unweighted Baseline | 87.08% | 75.83% | 81.07% | 0.6239 | Baseline |
 
 > **Why Balanced Decision Trees?**  
